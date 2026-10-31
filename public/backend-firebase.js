@@ -51,7 +51,11 @@ async function createFirestoreDb(app) {
 
 export async function createBackend() {
   if (!configured()) return null;
-  const app = initializeApp(firebaseConfig);
+  // Di Vercel, login memakai domain situs sendiri (jalur /__/auth/ diteruskan oleh vercel.json)
+  // agar tidak terblokir pemisahan penyimpanan antardomain di browser.
+  const cfg = Object.assign({}, firebaseConfig);
+  if (/\.vercel\.app$/.test(location.hostname)) cfg.authDomain = location.host;
+  const app = initializeApp(cfg);
   const auth = getAuth(app);
   auth.languageCode = 'id';
   const db = storageMode === 'cloud' ? await createFirestoreDb(app) : createLocalDb('jsmp-localdb');
