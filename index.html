@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Jelajah SMP</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Figtree:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<main class="wrap">
+
+  <section id="login" class="wrap" aria-labelledby="ltitle">
+    <div class="hero">
+      <div class="atext">
+        <p class="kicker">SMP / MTs &middot; Kurikulum Merdeka</p>
+        <h1 id="ltitle">Jelajah <mark>SMP</mark></h1>
+        <span>300 soal untuk kelas 7, 8, dan 9. Masuk agar progresmu tersimpan dan ikut terbaca di perangkat lain.</span>
+      </div>
+    </div>
+    <p class="lstate" id="loginstate">Memeriksa akun...</p>
+    <div class="lbtns" id="loginbtns" hidden>
+      <button class="gbtnlogin" id="gsignin" type="button">
+        <svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        <span>Masuk dengan Google</span>
+      </button>
+      <button class="btn ghost" id="guestbtn" type="button">Main sebagai tamu</button>
+    </div>
+    <p class="nickmsg err" id="loginmsg" hidden></p>
+    <p class="foot">Papan peringkat memakai nama samaran. Alamat emailmu hanya dipakai Google untuk masuk dan tidak ditampilkan ke pemain lain. Progres tamu hanya tersimpan di perangkat ini.</p>
+  </section>
+
+  <section id="logins" class="wrap" hidden aria-labelledby="lgt">
+    <div class="bar">
+      <button class="btn ghost small" id="lgback" type="button">&larr; Dasbor</button>
+      <div class="racts">
+        <button class="btn ghost small" id="lgcsv" type="button">Unduh CSV</button>
+        <button class="btn ghost small" id="lgclear" type="button">Hapus riwayat</button>
+      </div>
+    </div>
+    <section class="board">
+      <h2 id="lgt">Riwayat login</h2>
+      <p class="foot" id="lgnote"></p>
+      <ul class="hlist" id="lglist"></ul>
+      <p class="foot">Daftar ini hanya berisi akun yang masuk lewat browser ini. Daftar semua akun dari semua perangkat ada di Firebase Console, menu Authentication &gt; Users.</p>
+    </section>
+  </section>
+
+  <section id="dash" class="wrap" hidden aria-labelledby="dtitle">
+    <div class="hero" id="acct" data-mode="wait">
+      <img id="aimg" alt="" width="64" height="64">
+      <div class="atext">
+        <p class="kicker" id="greet">Selamat datang</p>
+        <h1 id="dtitle">Halo, <mark id="aname">...</mark></h1>
+        <span id="astat">Menghubungkan...</span>
+        <div class="hrow">
+          <button class="linkbtn" id="editnick" type="button">Ganti nama samaran</button>
+          <button class="linkbtn" id="logout" type="button" hidden>Keluar</button>
+          <button class="linkbtn" id="loginsbtn" type="button" hidden>Riwayat login</button>
+          <button class="linkbtn" id="loginlink" type="button" hidden>Masuk dengan Google</button>
+        </div>
+        <form class="nickform" id="nickform" hidden>
+          <label class="sr" for="nickin">Nama samaran</label>
+          <input id="nickin" maxlength="20" autocomplete="off" spellcheck="false">
+          <button class="btn small" type="submit">Simpan</button>
+          <button class="btn ghost small" id="nickrnd" type="button">Acak</button>
+        </form>
+        <p class="nickmsg" id="nickmsg">Nama samaran tampil di papan peringkat. Jangan pakai nama aslimu.</p>
+      </div>
+    </div>
+    <div class="resume" id="resume" hidden>
+      <div class="atext"><b id="rtext"></b><span id="rsub"></span></div>
+      <div class="racts"><button class="btn small" id="rgo" type="button">Lanjutkan</button><button class="btn ghost small" id="rdrop" type="button">Buang</button></div>
+    </div>
+    <button class="btn big" id="go" type="button">Mulai bermain</button>
+    <div class="tiles" id="tiles"></div>
+    <section class="board" aria-labelledby="pt">
+      <h2 id="pt">Progresmu</h2>
+      <div class="prows" id="prows"></div>
+    </section>
+    <section class="board" id="hist" aria-labelledby="ht" hidden>
+      <h2 id="ht">Riwayat pengerjaan</h2>
+      <ul id="hlist" class="hlist"></ul>
+    </section>
+  </section>
+
+  <section id="home" class="wrap" hidden aria-labelledby="judul">
+    <div class="bar"><button class="btn ghost small" id="back" type="button">&larr; Dasbor</button></div>
+    <header>
+      <p class="kicker">SMP / MTs &middot; Kurikulum Merdeka</p>
+      <h1 id="judul">Jelajah <mark id="gmark">Kelas 7</mark></h1>
+      <p class="lead">Pilih satu mata pelajaran dan selesaikan misinya. Jawab benar dan cepat untuk mengumpulkan poin. Setiap jawaban punya penjelasan singkat.</p>
+      <div class="grades" role="group" aria-label="Pilih kelas">
+      <button type="button" class="gbtn" data-g="7" aria-pressed="true">Kelas 7</button>
+      <button type="button" class="gbtn" data-g="8" aria-pressed="false">Kelas 8</button>
+      <button type="button" class="gbtn" data-g="9" aria-pressed="false">Kelas 9</button>
+    </div>
+    <ul class="rules">
+        <li>20 soal</li>
+        <li>5 nyawa</li>
+        <li>20 detik per soal</li>
+      </ul>
+    </header>
+    <div class="grid" id="subjects"></div>
+    <section class="board" id="board" aria-labelledby="bt" hidden>
+      <h2 id="bt">Papan peringkat</h2>
+      <ol id="blist"></ol>
+      <p class="foot" id="bnote"></p>
+    </section>
+    <p class="foot">Di komputer, tekan tombol 1&ndash;4 atau A&ndash;D untuk memilih jawaban. Skor terbaik tersimpan di perangkat ini.</p>
+  </section>
+
+  <section id="play" class="wrap" hidden aria-label="Misi sedang berjalan">
+    <div class="bar">
+      <button class="btn ghost small" id="quit" type="button">Keluar</button>
+      <div class="stats">
+        <div class="hearts" id="hearts" role="img" aria-label="Nyawa"></div>
+        <div class="score" id="score" aria-label="Skor">0</div>
+      </div>
+    </div>
+    <div class="who" id="who"></div>
+    <div class="prog" id="prog" aria-hidden="true"></div>
+    <div class="timerrow">
+      <div class="timer" id="timer" aria-hidden="true"><i id="tfill"></i></div>
+      <div class="tleft" id="tleft">20</div>
+    </div>
+    <div class="qcard">
+      <p class="qnum" id="qnum"></p>
+      <h2 class="qtext" id="qtext"></h2>
+    </div>
+    <div class="opts" id="opts"></div>
+    <div class="fb" id="fb" hidden aria-live="polite">
+      <p class="verdict" id="verdict"></p>
+      <p id="correctline"></p>
+      <p class="why" id="why"></p>
+      <div class="actions"><button class="btn" id="next" type="button">Lanjut</button></div>
+    </div>
+  </section>
+
+  <section id="result" class="wrap" hidden aria-labelledby="rtitle">
+    <div class="rcard">
+      <p class="kicker" id="rsubj"></p>
+      <h2 id="rtitle"></h2>
+      <div class="stars" id="rstars" role="img"></div>
+      <div class="big"><span id="rscore">0</span><small>poin</small></div>
+      <span class="newbest" id="newbest" hidden>Skor terbaik baru</span>
+      <div class="facts">
+        <div><b id="fcorrect">0</b><span>benar</span></div>
+        <div><b id="fhearts">0</b><span>nyawa sisa</span></div>
+        <div><b id="fstreak">0</b><span>beruntun terbaik</span></div>
+      </div>
+      <p class="msg" id="rmsg"></p>
+      <div class="ractions">
+        <button class="btn" id="again" type="button">Main lagi</button>
+        <button class="btn ghost" id="home2" type="button">Pilih mapel</button>
+        <button class="btn ghost" id="dash2" type="button">Dasbor</button>
+      </div>
+    </div>
+    <div class="review" id="review" hidden>
+      <h3>Soal yang perlu diulang</h3>
+      <div id="revlist" class="review"></div>
+    </div>
+  </section>
+
+</main>
+<script type="module" src="app.js"></script>
+</body>
+</html>
