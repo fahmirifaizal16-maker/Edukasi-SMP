@@ -1,0 +1,66 @@
+rules_version = '2';
+
+// Aturan keamanan Firestore untuk Jelajah SMP.
+// Firebase Authentication memverifikasi token ID Google, lalu isi token tersedia
+// di request.auth. Semua keputusan akses di bawah ini bertumpu pada request.auth.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Harus sudah masuk dengan akun Google yang emailnya terverifikasi.
+    function signedIn() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    // OPSIONAL: batasi ke satu domain email sekolah. Hapus tanda // pada fungsi di
+    // bawah, ganti domainnya, lalu tambahkan "&& schoolOnly()" di dalam signedIn().
+    // function schoolOnly() {
+    //   return request.auth.token.email.matches('.*@sekolahku[.]sch[.]id');
+    // }
+
+    // Dokumen papan peringkat milik satu pemain. Hanya berisi nama samaran,
+    // avatar, dan skor terbaik. Email dan nama Google tidak disimpan di sini.
+    function validBoard(d) {
+      return d.keys().hasOnly(['best', 'nick', 'av', 'updated'])
+        && d.nick is string
+        && d.nick.matches('^[A-Za-z0-9][A-Za-z0-9 _.-]{2,19}$')
+        && d.av is int && d.av >= 0 && d.av < 6
+        && d.best is map && d.best.size() <= 18
+        && d.updated is number;
+    }
+
+    // Misi yang sedang berjalan ("current") dan riwayat misi selesai ("r_...").
+    function validRun(d) {
+      return d.keys().hasOnly(['kind', 'grade', 'id', 'name', 'qs', 'hearts', 'score',
+                               'streak', 'bestStreak', 'correct', 'log', 'total',
+                               'stars', 'updated'])
+        && d.updated is number
+        && (!('qs' in d) || (d.qs is list && d.qs.size() <= 20))
+        && (!('log' in d) || (d.log is list && d.log.size() <= 20));
+    }
+
+    // Semua pemain yang sudah masuk boleh membaca papan peringkat.
+    // Hanya pemilik yang boleh menulis dokumennya sendiri.
+    match /leaderboard/{uid} {
+      allow read: if signedIn();
+      allow create, update: if isOwner(uid) && validBoard(request.resource.data);
+      allow delete: if false;
+    }
+
+    // Progres pribadi: hanya pemilik yang bisa membaca atau menulis.
+    match /users/{uid}/runs/{runId} {
+      allow read, delete: if isOwner(uid);
+      allow create, update: if isOwner(uid)
+        && (runId == 'current' || runId.matches('r_[0-9]+'))
+        && validRun(request.resource.data);
+    }
+
+    // Selain itu, semuanya ditolak.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
