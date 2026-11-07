@@ -3,6 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" id="tcolor" content="#0F1A2D">
+<meta name="color-scheme" content="light dark">
+<script>
+try { var t = localStorage.getItem('jsmp-theme'); if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t); } catch (e) {}
+</script>
 <title>Jelajah SMP</title>
 <link rel="icon" href="data:,">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -10,7 +15,20 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Figtree:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
 <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body data-view="login">
+<header class="topbar" id="topbar">
+  <div class="topbar-in">
+    <button class="brand" id="brand" type="button" aria-label="Ke dasbor">Jelajah <mark>SMP</mark></button>
+    <nav class="topnav" aria-label="Navigasi utama">
+      <button type="button" data-go="dash">Dasbor</button>
+      <button type="button" data-go="home">Pilih mapel</button>
+    </nav>
+    <button class="iconbtn" id="themebtn" type="button" data-mode="dark" aria-label="Ganti tema terang atau gelap">
+      <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+</header>
 <main class="wrap">
 
   <section id="login" class="wrap" aria-labelledby="ltitle">
@@ -71,12 +89,16 @@
         <p class="nickmsg" id="nickmsg">Nama samaran tampil di papan peringkat. Jangan pakai nama aslimu.</p>
       </div>
     </div>
+    <div class="dgrid">
+    <div class="dcol">
     <div class="resume" id="resume" hidden>
       <div class="atext"><b id="rtext"></b><span id="rsub"></span></div>
       <div class="racts"><button class="btn small" id="rgo" type="button">Lanjutkan</button><button class="btn ghost small" id="rdrop" type="button">Buang</button></div>
     </div>
     <button class="btn big" id="go" type="button">Mulai bermain</button>
     <div class="tiles" id="tiles"></div>
+    </div>
+    <div class="dcol">
     <section class="board" aria-labelledby="pt">
       <h2 id="pt">Progresmu</h2>
       <div class="prows" id="prows"></div>
@@ -85,10 +107,14 @@
       <h2 id="ht">Riwayat pengerjaan</h2>
       <ul id="hlist" class="hlist"></ul>
     </section>
+    </div>
+    </div>
   </section>
 
   <section id="home" class="wrap" hidden aria-labelledby="judul">
     <div class="bar"><button class="btn ghost small" id="back" type="button">&larr; Dasbor</button></div>
+    <div class="hgrid">
+    <div class="hmain">
     <header>
       <p class="kicker">SMP / MTs &middot; Kurikulum Merdeka</p>
       <h1 id="judul">Jelajah <mark id="gmark">Kelas 7</mark></h1>
@@ -105,12 +131,16 @@
       </ul>
     </header>
     <div class="grid" id="subjects"></div>
+    </div>
+    <aside>
     <section class="board" id="board" aria-labelledby="bt" hidden>
       <h2 id="bt">Papan peringkat</h2>
       <ol id="blist"></ol>
       <p class="foot" id="bnote"></p>
     </section>
-    <p class="foot">Di komputer, tekan tombol 1&ndash;4 atau A&ndash;D untuk memilih jawaban. Skor terbaik tersimpan di perangkat ini.</p>
+    </aside>
+    </div>
+    <p class="foot"><span class="hint-mouse">Di komputer, tekan tombol 1&ndash;4 atau A&ndash;D untuk memilih jawaban. </span><span class="hint-touch">Ketuk jawaban untuk memilih. </span>Skor terbaik tersimpan di perangkat ini.</p>
   </section>
 
   <section id="play" class="wrap" hidden aria-label="Misi sedang berjalan">
@@ -138,6 +168,7 @@
       <p class="why" id="why"></p>
       <div class="actions"><button class="btn" id="next" type="button">Lanjut</button></div>
     </div>
+    <p class="hint hint-mouse">Tekan <kbd>1</kbd>&ndash;<kbd>4</kbd> atau <kbd>A</kbd>&ndash;<kbd>D</kbd> untuk menjawab, <kbd>Enter</kbd> untuk lanjut.</p>
   </section>
 
   <section id="result" class="wrap" hidden aria-labelledby="rtitle">
@@ -166,6 +197,10 @@
   </section>
 
 </main>
+<nav class="tabbar" id="tabbar" aria-label="Navigasi bawah">
+  <button type="button" data-go="dash"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg>Dasbor</button>
+  <button type="button" data-go="home"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>Pilih mapel</button>
+</nav>
 <script type="module" src="app.js"></script>
 </body>
 </html>

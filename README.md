@@ -4,6 +4,15 @@ Game kuis SMP kelas 7, 8, dan 9 (300 soal, 20 soal per misi). Pemain masuk denga
 
 Semuanya JavaScript di browser. Tidak ada server sendiri dan tidak perlu `npm`. Login diverifikasi oleh Firebase Authentication, data disimpan di Cloud Firestore, dan siapa boleh membaca atau menulis apa ditentukan oleh `firestore.rules`.
 
+## Tampilan responsif
+Tampilan menyesuaikan perangkat secara otomatis:
+- **HP (di bawah 640px):** satu kolom, menu bawah (Dasbor, Pilih mapel), area ketuk besar, panel penjelasan menempel di bawah layar, getar singkat saat menjawab.
+- **HP miring:** soal di kiri dan pilihan jawaban di kanan supaya muat tanpa menggulir.
+- **Tablet (640px ke atas):** menu atas, kartu statistik empat kolom, pilihan jawaban dua kolom.
+- **Desktop (1024px ke atas):** dasbor dua kolom, papan peringkat di samping daftar mapel, hasil misi dengan daftar soal yang perlu diulang di samping, tombol 1 sampai 4 atau A sampai D untuk menjawab.
+- Tombol bulan/matahari di bilah atas mengganti tema terang atau gelap, dan pilihannya diingat.
+- Animasi dimatikan otomatis bagi pengguna yang memilih "kurangi gerakan" di sistemnya.
+
 ## Dua mode penyimpanan
 
 Atur di `public/firebase-config.js` pada `storageMode`:

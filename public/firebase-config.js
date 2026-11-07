@@ -18,7 +18,7 @@ export const firebaseConfig = {
 //             tetapi skor dan progres hanya ada di perangkat itu. Tidak perlu Firestore.
 //   'cloud' = Firestore. Progres ikut pindah antarperangkat. Perlu database dan
 //             firestore.rules dari README.
-export const storageMode = 'local';
+export const storageMode = 'cloud';
 
 // Email yang boleh membuka menu "Riwayat login". Ganti dengan emailmu sendiri.
 // Contoh: ['guruku@gmail.com']. Kalau dikosongkan, menu tidak muncul untuk siapa pun.

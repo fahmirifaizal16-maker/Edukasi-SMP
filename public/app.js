@@ -426,6 +426,81 @@ import { adminEmails } from './firebase-config.js';
     return a;
   }
   function fmt(n) { return Number(n).toLocaleString('id-ID'); }
+
+  /* ---------- Penyesuaian perangkat, tema, dan animasi ---------- */
+  var REDUCE = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var mqTouch = window.matchMedia('(pointer: coarse)');
+  // Menandai jenis layar dan cara input di <html> supaya CSS bisa menyesuaikan tampilan.
+  function syncDevice() {
+    var w = window.innerWidth, h = window.innerHeight, de = document.documentElement;
+    de.setAttribute('data-device', w < 640 ? 'phone' : w < 1024 ? 'tablet' : 'desktop');
+    de.setAttribute('data-input', mqTouch.matches ? 'touch' : 'mouse');
+    de.setAttribute('data-orient', w > h ? 'landscape' : 'portrait');
+  }
+  syncDevice();
+  var devTimer = null;
+  window.addEventListener('resize', function () { clearTimeout(devTimer); devTimer = setTimeout(syncDevice, 120); });
+  window.addEventListener('orientationchange', syncDevice);
+
+  function themeNow() {
+    var t = document.documentElement.getAttribute('data-theme');
+    return t || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  }
+  function paintTheme() {
+    $('themebtn').setAttribute('data-mode', themeNow());
+    var m = document.getElementById('tcolor');
+    if (m) m.setAttribute('content', getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#0F1A2D');
+  }
+  $('themebtn').addEventListener('click', function () {
+    var n = themeNow() === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', n);
+    try { localStorage.setItem('jsmp-theme', n); } catch (e) {}
+    paintTheme();
+  });
+  paintTheme();
+  try { window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', paintTheme); } catch (e) {}
+
+  function pulse(el, cls) { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
+  function buzz(p) { if (!REDUCE && mqTouch.matches && navigator.vibrate) { try { navigator.vibrate(p); } catch (e) {} } }
+
+  // Angka naik dari 0 ke nilai akhir untuk elemen ber-atribut data-n.
+  function countUps(root) {
+    var els = root.querySelectorAll('[data-n]');
+    for (var i = 0; i < els.length; i++) (function (el) {
+      var to = Number(el.getAttribute('data-n')), suf = el.getAttribute('data-suf') || '';
+      if (!isFinite(to)) return;
+      el.textContent = fmt(to) + suf;
+      if (REDUCE || to === 0) return;
+      var t0 = performance.now(), dur = 700;
+      (function tick(t) {
+        var k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+        el.textContent = fmt(Math.round(to * e)) + suf;
+        if (k < 1 && el.isConnected) requestAnimationFrame(tick);
+      })(t0);
+    })(els[i]);
+  }
+
+  function confetti() {
+    if (REDUCE) return;
+    var cv = document.createElement('canvas');
+    cv.className = 'confetti'; cv.setAttribute('aria-hidden', 'true');
+    var w = cv.width = window.innerWidth, h = cv.height = window.innerHeight;
+    document.body.appendChild(cv);
+    var cx = cv.getContext('2d'), cols = ['#FFD43B', '#2F5BEA', '#12805C', '#C2255C', '#6741D9'], ps = [], i;
+    for (i = 0; i < 100; i++) ps.push({ x: w / 2 + (Math.random() - .5) * w * .3, y: h * .35, vx: (Math.random() - .5) * 12, vy: -Math.random() * 12 - 3, s: 6 + Math.random() * 7, c: cols[i % cols.length], r: Math.random() * 6, vr: (Math.random() - .5) * .4 });
+    var t0 = performance.now(), life = 2600;
+    (function f(t) {
+      var el = t - t0;
+      cx.clearRect(0, 0, w, h);
+      ps.forEach(function (p) {
+        p.vy += .3; p.x += p.vx; p.y += p.vy; p.vx *= .99; p.r += p.vr;
+        cx.save(); cx.translate(p.x, p.y); cx.rotate(p.r);
+        cx.globalAlpha = Math.max(0, 1 - el / life); cx.fillStyle = p.c;
+        cx.fillRect(-p.s / 2, -p.s / 3, p.s, p.s * .6); cx.restore();
+      });
+      if (el < life) requestAnimationFrame(f); else cv.remove();
+    })(t0);
+  }
   function starsFor(c) { var r = c / TOTAL; return r >= 0.9 ? 3 : r >= 0.7 ? 2 : r >= 0.4 ? 1 : 0; }
   function starsHTML(n) {
     var h = '';
@@ -453,20 +528,36 @@ import { adminEmails } from './firebase-config.js';
     renderBoard();
   }
 
+  var enterTimer = null;
   function showView(name) {
     ['login', 'dash', 'home', 'play', 'result', 'logins'].forEach(function (v) { $(v).hidden = v !== name; });
+    document.body.setAttribute('data-view', name);
+    var sec = $(name);
+    sec.classList.remove('enter'); void sec.offsetWidth; sec.classList.add('enter');
+    clearTimeout(enterTimer);
+    enterTimer = setTimeout(function () { sec.classList.remove('enter'); }, 1300);
+    var nb = document.querySelectorAll('[data-go]');
+    for (var i = 0; i < nb.length; i++) {
+      if (nb[i].getAttribute('data-go') === name) nb[i].setAttribute('aria-current', 'page'); else nb[i].removeAttribute('aria-current');
+    }
+    countUps(sec);
     window.scrollTo(0, 0);
   }
+  function goView(v) { G = null; clearInterval(timer); renderHome(); showView(v); }
+  var navb = document.querySelectorAll('[data-go]');
+  for (var ni = 0; ni < navb.length; ni++) navb[ni].addEventListener('click', function () { goView(this.getAttribute('data-go')); });
+  $('brand').addEventListener('click', function () { goView('dash'); });
 
   function id_topics(s) { return s.id === 'campur' ? s.topics : topicsOf(s); }
   function renderHome() {
     var best = loadBest(), grid = $('subjects');
     grid.innerHTML = '';
-    SUBJECTS.concat([MIX]).forEach(function (s) {
+    SUBJECTS.concat([MIX]).forEach(function (s, idx) {
       var b = document.createElement('button');
       b.type = 'button';
       b.className = 'subj' + (s.id === 'campur' ? ' wide' : '');
       b.style.setProperty('--c', 'var(--c-' + s.id + ')');
+      b.style.setProperty('--i', idx);
       var badge = document.createElement('span'); badge.className = 'badge'; badge.textContent = s.abbr;
       var h = document.createElement('h3'); h.textContent = s.name;
       var t = document.createElement('span'); t.className = 'topics'; t.textContent = id_topics(s);
@@ -610,7 +701,10 @@ import { adminEmails } from './firebase-config.js';
     $('next').textContent = finished ? 'Lihat hasil' : 'Soal berikutnya';
     fb.hidden = false;
     $('score').textContent = fmt(G.score);
+    if (ok) pulse($('score'), 'bump');
     renderHearts();
+    if (!ok) { var lostH = $('hearts').children[G.hearts]; if (lostH) lostH.classList.add('lost'); }
+    buzz(ok ? 15 : [40, 40, 40]);
     markProgress();
     $('next').focus({ preventScroll: true });
     fb.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
@@ -632,6 +726,7 @@ import { adminEmails } from './firebase-config.js';
     $('rtitle').textContent = out ? 'Nyawa habis' : ((G.correct / G.qs.length) >= 0.9 ? 'Misi tuntas dengan gemilang' : (G.correct / G.qs.length) >= 0.7 ? 'Misi tuntas' : 'Misi selesai');
     var rs = $('rstars'); rs.innerHTML = starsHTML(stars); rs.setAttribute('aria-label', stars + ' dari 3 bintang');
     $('rscore').textContent = fmt(G.score);
+    $('rscore').setAttribute('data-n', G.score);
     $('newbest').hidden = !(isBest && G.score > 0);
     $('fcorrect').textContent = G.correct + '/' + G.qs.length;
     $('fhearts').textContent = G.hearts;
@@ -653,6 +748,7 @@ import { adminEmails } from './firebase-config.js';
     pushScore();
     finishRun({ kind: 'done', grade: G.grade, id: G.id, name: G.name, score: G.score, correct: G.correct, total: G.qs.length, stars: stars, hearts: G.hearts, updated: Date.now() });
     showView('result');
+    if (stars >= 2) setTimeout(confetti, 250);
   }
 
   $('next').addEventListener('click', function () {
@@ -762,18 +858,21 @@ import { adminEmails } from './firebase-config.js';
       var at = totals.findIndex(function (r) { return r.id === cloud.uid; });
       if (at >= 0) rank = '#' + (at + 1) + ' dari ' + totals.length;
     }
-    var tiles = [['Total poin', fmt(all.score)], ['Bintang', all.stars + ' / 54'], ['Mapel dimainkan', all.played + ' / 18'], ['Peringkat', rank]];
+    var tiles = [['Total poin', fmt(all.score), all.score, ''], ['Bintang', all.stars + ' / 54', all.stars, ' / 54'], ['Mapel dimainkan', all.played + ' / 18', all.played, ' / 18'], ['Peringkat', rank]];
     var tb = $('tiles'); tb.innerHTML = '';
-    tiles.forEach(function (t) {
+    tiles.forEach(function (t, ti) {
       var d = document.createElement('div'); d.className = 'tile';
+      d.style.setProperty('--i', ti);
       var b = document.createElement('b'); b.textContent = t[1];
+      if (t.length > 2) { b.setAttribute('data-n', t[2]); b.setAttribute('data-suf', t[3]); }
       var sp = document.createElement('span'); sp.textContent = t[0];
       d.appendChild(b); d.appendChild(sp); tb.appendChild(d);
     });
     var pr = $('prows'); pr.innerHTML = '';
-    [7, 8, 9].forEach(function (g) {
+    [7, 8, 9].forEach(function (g, gi2) {
       var x = sumBest(best, g + ':');
       var btn = document.createElement('button'); btn.type = 'button'; btn.className = 'prow';
+      btn.style.setProperty('--i', gi2);
       var a = document.createElement('span'); a.className = 'pg'; a.textContent = 'Kelas ' + g;
       var bar = document.createElement('span'); bar.className = 'pbar';
       var i = document.createElement('i'); i.style.width = Math.round(x.played / 6 * 100) + '%'; bar.appendChild(i);
@@ -953,6 +1052,7 @@ import { adminEmails } from './firebase-config.js';
     top.forEach(function (r, i) {
       var li = document.createElement('li');
       li.className = 'brow' + (r.id === cloud.uid ? ' me' : '');
+      li.style.setProperty('--i', i);
       var rk = document.createElement('span'); rk.className = 'rk'; rk.textContent = String(i + 1);
       var im = document.createElement('img'); im.alt = ''; im.width = 32; im.height = 32; im.src = avatarUrl(r.nick, r.av);
       var nm = document.createElement('span'); nm.className = 'nm';
