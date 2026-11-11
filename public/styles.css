@@ -507,3 +507,77 @@ main > #login { max-width: 34rem; }
   main > #result:not(:has(.review:not([hidden]))) { max-width: 40rem; }
 }
 main > #logins { max-width: 60rem; }
+/* ===== Materi & simulasi ===== */
+.learnbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin: 4px 0 16px; }
+.learnbar > b { font-family: var(--font-display); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font: inherit; font-weight: 700; cursor: pointer; background: var(--surface); color: var(--ink); border: 2px solid var(--edge); border-radius: 999px; padding: 6px 14px; min-height: 40px; box-shadow: 2px 2px 0 var(--edge); transition: transform .15s, background .2s; }
+.chip:hover { transform: translateY(-2px); }
+.learnchip { border-left: 8px solid var(--c, var(--edge)); }
+.learnchip[aria-pressed="true"] { background: var(--hl); color: var(--hl-ink); }
+#mtabs { margin: 12px 0; }
+.simcard { margin: 12px 0 18px; }
+.simcard h2 { margin: 0 0 6px; font-size: 1.1rem; }
+.simbody { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 16px; align-items: center; }
+.simbody.col { grid-template-columns: minmax(0, 1fr); justify-items: start; }
+.simsvg { width: 100%; height: auto; max-height: 340px; background: var(--bg); border: 2px solid var(--edge); border-radius: 8px; }
+.simctl { display: grid; gap: 10px; }
+.ctl { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr) 2.4rem; gap: 8px; align-items: center; font-weight: 600; }
+.ctl input { width: 100%; accent-color: var(--c-mat); min-height: 32px; }
+.ctl output { font-family: var(--font-mono, monospace); font-weight: 700; }
+.siminfo { margin: 0; font-weight: 600; line-height: 1.45; }
+.seg { display: flex; flex-wrap: wrap; gap: 6px; }
+.seg button { font: inherit; font-weight: 700; cursor: pointer; background: var(--surface); color: var(--ink); border: 2px solid var(--edge); border-radius: 8px; padding: 6px 14px; min-height: 40px; }
+.seg button[aria-pressed="true"] { background: var(--hl); color: var(--hl-ink); }
+.tl { position: relative; display: flex; gap: 10px; overflow-x: auto; padding: 14px 4px 10px; width: 100%; scroll-snap-type: x proximity; }
+.tl::before { content: ""; position: absolute; left: 0; right: 0; top: 28px; height: 4px; background: var(--edge); opacity: .2; }
+.tldot { flex: 0 0 auto; scroll-snap-align: center; font: inherit; cursor: pointer; display: grid; gap: 2px; justify-items: center; text-align: center; background: var(--surface); color: var(--ink); border: 2px solid var(--edge); border-radius: 8px; padding: 8px 10px; min-width: 104px; position: relative; transition: transform .3s, background .3s; }
+.tldot b { font-family: var(--font-mono, monospace); }
+.tldot span { font-size: .8rem; }
+.tldot.past { background: var(--bg); opacity: .8; }
+.tldot.on { background: var(--hl); color: var(--hl-ink); transform: translateY(-6px) scale(1.06); }
+.tlcard { display: grid; gap: 4px; width: 100%; background: var(--bg); border: 2px solid var(--edge); border-radius: 8px; padding: 12px 14px; }
+.flash { animation: popIn .45s var(--ease, ease) backwards; }
+.slots { display: flex; flex-wrap: wrap; gap: 8px; width: 100%; min-height: 62px; }
+.slot { flex: 1 1 110px; min-height: 52px; display: grid; place-items: center; text-align: center; border: 2px dashed var(--edge); border-radius: 8px; padding: 6px 10px; font-weight: 700; position: relative; }
+.slot.full { border-style: solid; animation: popIn .4s var(--ease, ease); color: #fff; }
+.slot.full::after { content: attr(data-r); position: absolute; bottom: -1.3em; left: 0; right: 0; font-size: .72rem; color: var(--ink); font-weight: 600; }
+.slot.rS { background: var(--c-mat); } .slot.rP { background: var(--c-indo); } .slot.rO { background: var(--c-ipa); } .slot.rK { background: var(--c-ips); }
+.slots { margin-bottom: 1.3em; }
+.chip.bad { animation: shake .35s; }
+@keyframes shake { 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
+.sent { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; }
+.tline { position: relative; display: flex; justify-content: space-between; width: 100%; padding: 22px 6px 0; border-top: 4px solid var(--edge); margin-top: 8px; font-style: normal; font-weight: 700; }
+.tline i { font-style: normal; }
+.tdot { position: absolute; top: -10px; width: 16px; height: 16px; border-radius: 50%; background: var(--hl); border: 2px solid var(--edge); left: 8%; transition: left .6s var(--ease, ease); }
+.tline[data-t="1"] .tdot { left: calc(50% - 8px); } .tline[data-t="2"] .tdot { left: calc(92% - 8px); }
+.mlist { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); align-items: start; }
+.topic { background: var(--surface); border: 2px solid var(--edge); border-left: 10px solid var(--c, var(--edge)); border-radius: 8px; padding: 12px 16px; box-shadow: 3px 3px 0 var(--edge); }
+.topic summary { cursor: pointer; font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; min-height: 32px; }
+.topic ul { margin: 10px 0 0; padding-left: 1.2rem; display: grid; gap: 6px; line-height: 1.5; }
+.topic .example { margin: 12px 0 0; padding: 10px 12px; background: var(--bg); border-radius: 8px; line-height: 1.5; }
+.enter .topic { animation: popIn .45s var(--ease, ease) backwards; animation-delay: calc(var(--i, 0) * 55ms + 90ms); }
+@media (max-width: 720px) { .simbody { grid-template-columns: minmax(0, 1fr); } .ctl { grid-template-columns: 6.5rem minmax(0, 1fr) 2.2rem; } }
+@media (prefers-reduced-motion: reduce) { .flash, .slot.full, .chip.bad { animation: none; } .tdot, .tldot { transition: none; } }
+#materi { width: 100%; }
+
+/* ===== Simulasi per topik ===== */
+.topic[open] { grid-column: 1 / -1; }
+.topic .simcard { margin: 14px 0 0; padding: 12px; background: var(--bg); border: 2px dashed var(--edge); border-radius: 8px; box-shadow: none; }
+.simhead { margin: 0 0 10px; font-family: var(--font-mono); font-size: .75rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.simrow { display: flex; flex-wrap: wrap; gap: 8px; }
+.flow { display: flex; flex-wrap: wrap; gap: 8px; width: 100%; }
+.fstep { font: inherit; cursor: pointer; display: flex; align-items: center; gap: 8px; background: var(--surface); color: var(--ink); border: 2px solid var(--edge); border-radius: 999px; padding: 5px 12px 5px 6px; min-height: 40px; text-align: left; transition: transform .25s, background .25s; }
+.fstep i { font-style: normal; font-family: var(--font-mono); font-weight: 700; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--bg); border: 2px solid var(--edge); flex: none; }
+.fstep span { font-weight: 600; font-size: .9rem; }
+.fstep.past { opacity: .7; } .fstep.past i { background: var(--c-ipa); color: #fff; }
+.fstep.on { background: var(--hl); color: var(--hl-ink); transform: translateY(-3px) scale(1.04); } .fstep.on i { background: var(--surface); color: var(--ink); }
+.fbar { width: 100%; height: 8px; border: 2px solid var(--edge); border-radius: 99px; overflow: hidden; background: var(--bg); }
+.fbar i { display: block; height: 100%; width: 0; background: var(--c-mat); transition: width .5s var(--ease, ease); }
+.sortcard { width: 100%; min-height: 76px; display: grid; place-items: center; text-align: center; background: var(--surface); border: 2px solid var(--edge); border-radius: 8px; padding: 14px; font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; box-shadow: 3px 3px 0 var(--edge); }
+.seglab { flex: 1 0 100%; font-size: .78rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+.sortcard.bad { animation: shake .35s; }
+.simbody { width: 100%; }
+.simbody.col { justify-items: stretch; }
+.simsvg text { font-family: var(--font-body, inherit); }
+@media (max-width: 520px) { .fstep span { font-size: .82rem; } .sent { font-size: 1.15rem; } .sortcard { font-size: 1.1rem; } .topic { padding: 10px 12px; } }

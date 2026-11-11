@@ -1,6 +1,6 @@
 # Jelajah SMP dengan login Google
 
-Game kuis SMP kelas 7, 8, dan 9 (300 soal, 20 soal per misi). Pemain masuk dengan akun Google, lalu progresnya tersimpan online dan terbaca di perangkat mana pun.
+Game kuis SMP kelas 7, 8, dan 9 (ratusan soal, 20 soal per misi). Pemain masuk dengan akun Google, lalu progresnya tersimpan online dan terbaca di perangkat mana pun.
 
 Semuanya JavaScript di browser. Tidak ada server sendiri dan tidak perlu `npm`. Login diverifikasi oleh Firebase Authentication, data disimpan di Cloud Firestore, dan siapa boleh membaca atau menulis apa ditentukan oleh `firestore.rules`.
 

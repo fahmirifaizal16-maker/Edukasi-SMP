@@ -1,4 +1,6 @@
 import { adminEmails } from './firebase-config.js';
+import { NEWQ, MATERI } from './content.js';
+import { simFor } from './sims.js';
 
 (function () {
   var TIME = 20, TOTAL = 20, LIVES = 5;
@@ -412,6 +414,12 @@ import { adminEmails } from './firebase-config.js';
     EXTRA[s.id][8] = EXTRA[s.id][8].concat(MORE[s.id][8]);
     EXTRA[s.id][9] = EXTRA[s.id][9].concat(MORE[s.id][9]);
   });
+  SUBJECTS.forEach(function (s) {
+    function conv(a) { return a.map(function (x) { return Q(x.q, x.a, x.w, x.e); }); }
+    s.bank = s.bank.concat(conv(NEWQ[s.id][7]));
+    EXTRA[s.id][8] = EXTRA[s.id][8].concat(conv(NEWQ[s.id][8]));
+    EXTRA[s.id][9] = EXTRA[s.id][9].concat(conv(NEWQ[s.id][9]));
+  });
   var MIX = { id: 'campur', abbr: 'MIX', name: 'Campuran', topics: 'Soal acak dari kelima mata pelajaran' };
 
   var STAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.1 6.6 7.2.9-5.3 5 1.4 7.2L12 18.1 5.6 21.7l1.4-7.2-5.3-5 7.2-.9z"/></svg>';
@@ -530,7 +538,7 @@ import { adminEmails } from './firebase-config.js';
 
   var enterTimer = null;
   function showView(name) {
-    ['login', 'dash', 'home', 'play', 'result', 'logins'].forEach(function (v) { $(v).hidden = v !== name; });
+    ['login', 'dash', 'home', 'play', 'result', 'logins', 'materi'].forEach(function (v) { $(v).hidden = v !== name; });
     document.body.setAttribute('data-view', name);
     var sec = $(name);
     sec.classList.remove('enter'); void sec.offsetWidth; sec.classList.add('enter');
@@ -543,7 +551,7 @@ import { adminEmails } from './firebase-config.js';
     countUps(sec);
     window.scrollTo(0, 0);
   }
-  function goView(v) { G = null; clearInterval(timer); renderHome(); showView(v); }
+  function goView(v) { G = null; clearInterval(timer); if (typeof simStop === 'function') simStop(); renderHome(); showView(v); }
   var navb = document.querySelectorAll('[data-go]');
   for (var ni = 0; ni < navb.length; ni++) navb[ni].addEventListener('click', function () { goView(this.getAttribute('data-go')); });
   $('brand').addEventListener('click', function () { goView('dash'); });
@@ -574,8 +582,62 @@ import { adminEmails } from './firebase-config.js';
       b.addEventListener('click', function () { startGame(s.id); });
       grid.appendChild(b);
     });
+    var lr = $('learn'); lr.innerHTML = '';
+    SUBJECTS.forEach(function (s) {
+      var c = document.createElement('button'); c.type = 'button'; c.className = 'chip learnchip';
+      c.style.setProperty('--c', 'var(--c-' + s.id + ')'); c.textContent = s.name;
+      c.addEventListener('click', function () { openMateri(s.id); });
+      lr.appendChild(c);
+    });
     renderResume(); renderHistory(); renderDash();
   }
+
+  var cleaners = [], simStop = function () { cleaners.forEach(function (f) { f(); }); cleaners = []; }, mSubj = 'mat';
+  function openMateri(id) {
+    mSubj = id; simStop();
+    var s = SUBJECTS.filter(function (x) { return x.id === id; })[0];
+    showView('materi');
+    $('mkick').textContent = 'Kelas ' + grade + ' \u00b7 ' + topicsOf(s);
+    $('mtitle').textContent = 'Materi ' + s.name;
+    var tabs = $('mtabs'); tabs.innerHTML = '';
+    SUBJECTS.forEach(function (x) {
+      var c = document.createElement('button'); c.type = 'button'; c.className = 'chip learnchip';
+      c.style.setProperty('--c', 'var(--c-' + x.id + ')'); c.textContent = x.name;
+      c.setAttribute('aria-pressed', String(x.id === id));
+      c.addEventListener('click', function () { openMateri(x.id); });
+      tabs.appendChild(c);
+    });
+    var list = $('mlist'); list.innerHTML = '';
+    (MATERI[id][grade] || []).forEach(function (t, i) {
+      var d = document.createElement('details'); d.className = 'topic'; d.style.setProperty('--c', 'var(--c-' + id + ')');
+      d.style.setProperty('--i', i);
+      var sm = document.createElement('summary'); sm.textContent = t.title; d.appendChild(sm);
+      var ul = document.createElement('ul');
+      t.points.forEach(function (p) { var li = document.createElement('li'); li.textContent = p; ul.appendChild(li); });
+      d.appendChild(ul);
+      if (t.example) { var ex = document.createElement('p'); ex.className = 'example'; var b = document.createElement('b'); b.textContent = 'Contoh: '; ex.appendChild(b); ex.appendChild(document.createTextNode(t.example)); d.appendChild(ex); }
+      var mk = simFor(id, grade, i);
+      if (mk) {
+        var box = document.createElement('div'); box.className = 'simcard';
+        var ht = document.createElement('p'); ht.className = 'simhead'; ht.textContent = 'Simulasi interaktif'; box.appendChild(ht);
+        var slot = document.createElement('div'); box.appendChild(slot); d.insertBefore(box, ul);
+        (function (mk, slot, d) {
+          var stop = null;
+          function sync() {
+            if (d.open && !stop) { try { stop = mk(slot) || function () {}; } catch (e) { slot.textContent = 'Simulasi belum bisa dimuat.'; stop = function () {}; } }
+            else if (!d.open && stop) { stop(); stop = null; slot.innerHTML = ''; }
+          }
+          d.addEventListener('toggle', sync);
+          cleaners.push(function () { if (stop) { stop(); stop = null; } });
+          if (i === 0) { d.open = true; sync(); }
+        })(mk, slot, d);
+      } else if (i === 0) d.open = true;
+      list.appendChild(d);
+    });
+    window.scrollTo(0, 0);
+  }
+  $('mback').addEventListener('click', function () { simStop(); goView('home'); });
+  $('mplay').addEventListener('click', function () { simStop(); startGame(mSubj); });
 
   function buildQuestions(id) {
     var pool;

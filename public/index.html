@@ -36,7 +36,7 @@ try { var t = localStorage.getItem('jsmp-theme'); if (t === 'dark' || t === 'lig
       <div class="atext">
         <p class="kicker">SMP / MTs &middot; Kurikulum Merdeka</p>
         <h1 id="ltitle">Jelajah <mark>SMP</mark></h1>
-        <span>300 soal untuk kelas 7, 8, dan 9. Masuk agar progresmu tersimpan dan ikut terbaca di perangkat lain.</span>
+        <span>Ratusan soal, materi, dan simulasi untuk kelas 7, 8, dan 9. Masuk agar progresmu tersimpan dan ikut terbaca di perangkat lain.</span>
       </div>
     </div>
     <p class="lstate" id="loginstate">Memeriksa akun...</p>
@@ -130,6 +130,7 @@ try { var t = localStorage.getItem('jsmp-theme'); if (t === 'dark' || t === 'lig
         <li>20 detik per soal</li>
       </ul>
     </header>
+    <div class="learnbar"><b>Belajar dulu, baru main</b><div class="chips" id="learn"></div></div>
     <div class="grid" id="subjects"></div>
     </div>
     <aside>
@@ -141,6 +142,17 @@ try { var t = localStorage.getItem('jsmp-theme'); if (t === 'dark' || t === 'lig
     </aside>
     </div>
     <p class="foot"><span class="hint-mouse">Di komputer, tekan tombol 1&ndash;4 atau A&ndash;D untuk memilih jawaban. </span><span class="hint-touch">Ketuk jawaban untuk memilih. </span>Skor terbaik tersimpan di perangkat ini.</p>
+  </section>
+
+  <section id="materi" class="wrap" hidden aria-labelledby="mtitle">
+    <div class="bar"><button class="btn ghost small" id="mback" type="button">&larr; Pilih mapel</button>
+      <button class="btn small" id="mplay" type="button">Latihan soal</button></div>
+    <header>
+      <p class="kicker" id="mkick">Materi</p>
+      <h1 id="mtitle">Materi</h1>
+    </header>
+    <div class="chips" id="mtabs" role="group" aria-label="Pilih mata pelajaran"></div>
+    <div id="mlist" class="mlist"></div>
   </section>
 
   <section id="play" class="wrap" hidden aria-label="Misi sedang berjalan">
